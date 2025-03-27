@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CICD.Tools.Sbom": {
+      "commandName": "Project",
+      "commandLineArgs": "generate-and-add -s \"C:\\_Testing\\SbomTest\" -p \"C:\\_Testing\\SbomTest\\SbomTest\\bin\\Debug\\net48\\DataMinerBuild\\SbomTest.1.0.0.dmapp\" -o \"C:\\_Testing\\_Temp\" -pn \"SbomTest\" -pv \"1.0.0\" -ps \"Skyline Communications\""
+    }
+  }
+}
