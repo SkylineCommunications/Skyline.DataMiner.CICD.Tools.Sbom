@@ -6,9 +6,21 @@
     using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.FileSystem.DirectoryInfoWrapper;
     using Skyline.DataMiner.CICD.FileSystem.FileInfoWrapper;
+    using Skyline.DataMiner.CICD.FileSystem.FileSystemInfoWrapper;
 
     internal static class OptionExtensions
     {
+        /// <summary>
+        /// Configures an option to accept only values corresponding to an existing file.
+        /// </summary>
+        /// <param name="option">The option to configure.</param>
+        /// <returns>The option being extended.</returns>
+        public static Option<IFileSystemInfoIO?> ExistingOnly(this Option<IFileSystemInfoIO?> option)
+        {
+            option.AddValidator(FileOrDirectoryExists);
+            return option;
+        }
+
         /// <summary>
         /// Configures an option to accept only values corresponding to an existing file.
         /// </summary>
@@ -29,6 +41,25 @@
         {
             option.AddValidator(DirectoryExists);
             return option;
+        }
+
+        private static void FileOrDirectoryExists(OptionResult result)
+        {
+            foreach (Token token in result.Tokens)
+            {
+                if (FileSystem.Instance.File.Exists(token.Value))
+                {
+                    continue;
+                }
+
+                if (FileSystem.Instance.Directory.Exists(token.Value))
+                {
+                    continue;
+                }
+
+                result.ErrorMessage = result.LocalizationResources.FileOrDirectoryDoesNotExist(token.Value);
+                return;
+            }
         }
 
         private static void FileExists(OptionResult result)

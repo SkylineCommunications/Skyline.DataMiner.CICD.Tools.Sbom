@@ -16,7 +16,7 @@
         public AddCommand() : base(name: "add", description: "Adds the specified SBOM to the DataMiner package.")
         {
             AddOption(option: new Option<FileInfo>(
-                aliases: ["--sbom-file", "-o"],
+                aliases: ["--sbom-file", "-s"],
                 description: "The SBOM file path.",
                 parseArgument: OptionHelper.ParseFileInfo!)
             {

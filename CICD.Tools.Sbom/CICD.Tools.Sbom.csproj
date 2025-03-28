@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Sbom.Extensions.DependencyInjection" Version="3.1.0" />
-    <PackageReference Include="Skyline.DataMiner.CICD.FileSystem" Version="1.2.1-bravo" />
+    <PackageReference Include="Skyline.DataMiner.CICD.FileSystem" Version="1.2.1-charlie" />
     <PackageReference Include="System.CommandLine.Hosting" Version="0.4.0-alpha.22272.1" />
   </ItemGroup>
 

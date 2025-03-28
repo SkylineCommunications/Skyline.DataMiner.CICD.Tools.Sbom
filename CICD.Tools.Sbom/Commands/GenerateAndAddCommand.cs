@@ -12,6 +12,7 @@
     using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.FileSystem.DirectoryInfoWrapper;
     using Skyline.DataMiner.CICD.FileSystem.FileInfoWrapper;
+    using Skyline.DataMiner.CICD.FileSystem.FileSystemInfoWrapper;
     using Skyline.DataMiner.CICD.Tools.Sbom.Services;
     using Skyline.DataMiner.CICD.Tools.Sbom.SystemCommandLine;
 
@@ -20,10 +21,10 @@
         public GenerateAndAddCommand() : base(name: "generate-and-add",
             description: "Generates a SBOM file for the provided directory and adds it to the provided package.")
         {
-            AddOption(option: new Option<DirectoryInfo>(
-                aliases: ["--solution-directory", "-s"],
-                description: "The directory containing the solution.",
-                parseArgument: OptionHelper.ParseDirectoryInfo!)
+            AddOption(option: new Option<IFileSystemInfoIO>(
+                aliases: ["--solution-path", "-s"],
+                description: "The directory containing the solution or the solution file itself",
+                parseArgument: OptionHelper.ParseFileSystemInfo!)
             {
                 IsRequired = true
             }!.ExistingOnly());
@@ -71,7 +72,7 @@
     {
         /* Automatic binding with System.CommandLine.NamingConventionBinder */
 
-        public required DirectoryInfo SolutionDirectory { get; set; }
+        public required IFileSystemInfoIO SolutionPath { get; set; }
 
         public required FileInfo PackageFile { get; set; }
 
@@ -106,8 +107,15 @@
                     PackageVersion = PackageVersion,
                 };
 
+                IDirectoryInfoIO solutionDirectory = SolutionPath switch
+                {
+                    IDirectoryInfoIO directory => directory,
+                    IFileInfoIO file => new DirectoryInfo(FileSystem.Instance.Path.GetDirectoryName(file.FullName)),
+                    _ => throw new InvalidOperationException($"{nameof(SolutionPath)} is not a directory or file.")
+                };
+
                 // Pass along the unzipped package to include the files in the SBOM as well.
-                var sbomFilePath = await sbomService.GenerateAsync(metadata, unzippedPackage, SolutionDirectory, temporaryDirectory);
+                var sbomFilePath = await sbomService.GenerateAsync(metadata, unzippedPackage, solutionDirectory, temporaryDirectory);
                 if (sbomFilePath == null)
                 {
                     logger.LogError("Failed to generate SBOM file.");

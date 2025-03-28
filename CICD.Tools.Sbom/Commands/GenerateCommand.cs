@@ -10,6 +10,8 @@
 
     using Skyline.DataMiner.CICD.FileSystem;
     using Skyline.DataMiner.CICD.FileSystem.DirectoryInfoWrapper;
+    using Skyline.DataMiner.CICD.FileSystem.FileInfoWrapper;
+    using Skyline.DataMiner.CICD.FileSystem.FileSystemInfoWrapper;
     using Skyline.DataMiner.CICD.Tools.Sbom.Services;
     using Skyline.DataMiner.CICD.Tools.Sbom.SystemCommandLine;
 
@@ -17,22 +19,22 @@
     {
         public GenerateCommand() : base(name: "generate", description: "Generates a SBOM file for the provided directory.")
         {
-            AddOption(option: new Option<DirectoryInfo>(
-                aliases: ["--solution-directory", "-sd"],
-                description: "The path to the solution directory.",
-                parseArgument: OptionHelper.ParseDirectoryInfo!)
+            AddOption(option: new Option<IFileSystemInfoIO>(
+                aliases: ["--solution-path", "-s"],
+                description: "The directory containing the solution or the solution file itself",
+                parseArgument: OptionHelper.ParseFileSystemInfo!)
             {
                 IsRequired = true
             }!.ExistingOnly());
 
-            AddOption(option: new Option<string>(
+            AddOption(option: new Option<string?>(
                 aliases: ["--package-name", "-pn"],
-                description: "The name of the package the SBOM represents.")
+                description: "The name of the package the SBOM represents. Will default to the solution directory name.")
             {
-                IsRequired = true
+                IsRequired = false
             });
 
-            AddOption(option: new Option<string>(
+            AddOption(option: new Option<string?>(
                 aliases: ["--package-version", "-pv"],
                 description: "The version of the package the SBOM represents.")
             {
@@ -61,9 +63,9 @@
     {
         /* Automatic binding with System.CommandLine.NamingConventionBinder */
 
-        public required DirectoryInfo SolutionDirectory { get; set; }
+        public required IFileSystemInfoIO SolutionPath { get; set; }
 
-        public required string PackageName { get; set; }
+        public string? PackageName { get; set; }
 
         public required string PackageVersion { get; set; }
 
@@ -82,14 +84,21 @@
 
             try
             {
+                IDirectoryInfoIO solutionDirectory = SolutionPath switch
+                {
+                    IDirectoryInfoIO directory => directory,
+                    IFileInfoIO file => new DirectoryInfo(FileSystem.Instance.Path.GetDirectoryName(file.FullName)),
+                    _ => throw new InvalidOperationException($"{nameof(SolutionPath)} is not a directory or file.")
+                };
+
                 var metadata = new SBOMMetadata
                 {
-                    PackageName = PackageName,
+                    PackageName = PackageName ?? solutionDirectory.Name,
                     PackageSupplier = PackageSupplier,
                     PackageVersion = PackageVersion
                 };
 
-                var sbomFilePath = await sbomService.GenerateAsync(metadata, SolutionDirectory, temporaryDirectory);
+                var sbomFilePath = await sbomService.GenerateAsync(metadata, solutionDirectory, temporaryDirectory);
                 if (sbomFilePath == null)
                 {
                     logger.LogError("Failed to generate SBOM file.");
