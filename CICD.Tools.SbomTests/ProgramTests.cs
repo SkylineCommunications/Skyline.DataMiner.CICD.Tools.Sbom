@@ -47,7 +47,7 @@
             string[] args =
             [
                 "generate",
-                "--solution-directory", solutionDirectory,
+                "--solution-path", solutionDirectory,
                 "--package-name", "MyTestPackage",
                 "--package-version", "1.2.3",
                 "--package-supplier", "Skyline Communications",
@@ -78,7 +78,7 @@
             string[] args =
             [
                 "generate-and-add",
-                "--solution-directory", solutionDirectory,
+                "--solution-path", solutionDirectory,
                 "--package-file", packageFile.FullName,
                 "--package-name", "MyTestPackage",
                 "--package-version", "1.2.3",
