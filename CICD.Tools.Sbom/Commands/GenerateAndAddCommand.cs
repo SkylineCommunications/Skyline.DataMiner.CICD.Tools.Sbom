@@ -91,6 +91,10 @@
 
         public async Task<int> InvokeAsync(InvocationContext context)
         {
+            logger.LogDebug($"### Starting {nameof(GenerateAndAddCommand)}");
+
+            logger.LogDebug("{solutionPath} || {packageFile} || {packageName} || {packageVersion} || {packageSupplier}", SolutionPath, PackageFile, PackageName, PackageVersion, PackageSupplier);
+
             var temporaryDirectory = new DirectoryInfo(FileSystem.Instance.Directory.CreateTemporaryDirectory());
 
             try
@@ -133,6 +137,7 @@
             finally
             {
                 temporaryDirectory.Delete(true);
+                logger.LogDebug($"### Ending {nameof(GenerateAndAddCommand)}");
             }
         }
     }

@@ -58,7 +58,7 @@
 
         public Task<int> InvokeAsync(InvocationContext context)
         {
-            logger.LogDebug($"### Starting {nameof(InvokeAsync)}");
+            logger.LogDebug($"### Starting {nameof(AddCommand)}");
 
             try
             {
@@ -72,12 +72,12 @@
             }
             catch (Exception e)
             {
-                logger.LogError(e, $"Exception during {nameof(InvokeAsync)}: {{e}}", e);
+                logger.LogError(e, $"Exception during {nameof(AddCommand)}: {{e}}", e);
                 return Task.FromResult(1);
             }
             finally
             {
-                logger.LogDebug($"### Finishing {nameof(InvokeAsync)}");
+                logger.LogDebug($"### Ending {nameof(AddCommand)}");
             }
         }
     }

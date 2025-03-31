@@ -80,6 +80,11 @@
 
         public async Task<int> InvokeAsync(InvocationContext context)
         {
+            logger.LogDebug($"### Starting {nameof(GenerateCommand)}");
+
+            logger.LogDebug("{solutionPath} || {packageName} || {packageVersion} || {packageSupplier}", SolutionPath, PackageName, PackageVersion, PackageSupplier);
+
+
             var temporaryDirectory = new DirectoryInfo(FileSystem.Instance.Directory.CreateTemporaryDirectory());
 
             try
@@ -108,6 +113,8 @@
                 Output.Create();
                 var redactedSbomFilePath = await sbomService.RedactAsync(sbomFilePath, Output, context.GetCancellationToken());
                 logger.LogInformation("SBOM file created at {redactedSbomFilePath}", redactedSbomFilePath);
+
+                return 0;
             }
             catch (Exception e)
             {
@@ -117,9 +124,8 @@
             finally
             {
                 temporaryDirectory.Delete(true);
+                logger.LogDebug($"### Ending {nameof(GenerateCommand)}");
             }
-
-            return 0;
         }
     }
 }
