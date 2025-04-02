@@ -54,7 +54,7 @@
                 ? LogEventLevel.Debug
                 : parseResult.GetValueForOption(logLevel) ?? LogEventLevel.Information;
 
-            var builder = new CommandLineBuilder(rootCommand).UseHost(host =>
+            var builder = new CommandLineBuilder(rootCommand).UseDefaults().UseHost(host =>
             {
                 host.ConfigureServices(services =>
                     {
