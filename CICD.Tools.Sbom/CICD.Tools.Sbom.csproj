@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Sbom.Extensions.DependencyInjection" Version="3.1.0" />
-    <PackageReference Include="Skyline.DataMiner.CICD.FileSystem" Version="1.2.1-charlie" />
+    <PackageReference Include="Skyline.DataMiner.CICD.FileSystem" Version="1.3.0" />
     <PackageReference Include="System.CommandLine.Hosting" Version="0.4.0-alpha.22272.1" />
   </ItemGroup>
 
