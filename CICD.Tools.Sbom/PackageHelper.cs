@@ -15,7 +15,7 @@
             ArgumentNullException.ThrowIfNull(sbomFile);
 
             IFileInfoIO file = packageFile;
-            if (output != null)
+            if (output != null && !String.Equals(output.FullName, packageFile.Directory.FullName))
             {
                 output.Create();
 
